@@ -1,0 +1,171 @@
+```gitignore
+# ============================================================
+# ROOT PROJECT
+# Next.js Frontend + Laravel Backend
+# ============================================================
+
+# ------------------------------------------------------------
+# Environment / Secrets
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# ------------------------------------------------------------
+# OS / Editor
+# ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# ------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ============================================================
+# FRONTEND - NEXT.JS
+# ============================================================
+
+/frontend/node_modules/
+/frontend/.next/
+/frontend/out/
+/frontend/build/
+/frontend/dist/
+
+# Next.js environment files
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.development
+/frontend/.env.development.local
+/frontend/.env.production
+/frontend/.env.production.local
+/frontend/.env.test
+/frontend/.env.test.local
+
+# Vercel
+/frontend/.vercel/
+
+# TypeScript
+/frontend/*.tsbuildinfo
+/frontend/next-env.d.ts
+
+# Testing / Coverage
+/frontend/coverage/
+/frontend/.nyc_output/
+
+# Cache
+/frontend/.cache/
+/frontend/.turbo/
+/frontend/.eslintcache/
+
+# ============================================================
+# BACKEND - LARAVEL
+# ============================================================
+
+/backend/vendor/
+/backend/node_modules/
+
+# Laravel environment
+/backend/.env
+/backend/.env.*
+!/backend/.env.example
+!/backend/.env.sample
+
+# Laravel storage
+/backend/storage/*.key
+/backend/storage/app/*
+!/backend/storage/app/.gitignore
+
+/backend/storage/framework/cache/*
+!/backend/storage/framework/cache/.gitignore
+
+/backend/storage/framework/sessions/*
+!/backend/storage/framework/sessions/.gitignore
+
+/backend/storage/framework/testing/*
+!/backend/storage/framework/testing/.gitignore
+
+/backend/storage/framework/views/*
+!/backend/storage/framework/views/.gitignore
+
+/backend/storage/logs/*
+!/backend/storage/logs/.gitignore
+
+# Laravel bootstrap cache
+/backend/bootstrap/cache/*
+!/backend/bootstrap/cache/.gitignore
+
+# Laravel public storage
+/backend/public/storage
+
+# PHPUnit
+/backend/phpunit.xml
+/backend/.phpunit.result.cache
+
+# Laravel Pint
+/backend/.php-cs-fixer.cache
+
+# Laravel Telescope
+/backend/storage/framework/testing/
+
+# ============================================================
+# PHP / Composer
+# ============================================================
+
+/backend/vendor/
+composer.phar
+
+# ============================================================
+# Database / Local Development
+# ============================================================
+
+*.sqlite
+*.sqlite3
+*.db
+
+/backend/database/*.sqlite
+/backend/database/*.sqlite3
+
+# ============================================================
+# Temporary / Backup Files
+# ============================================================
+
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+*~
+
+# ============================================================
+# Build / Deployment
+# ============================================================
+
+/frontend/.vercel/
+/frontend/.netlify/
+/frontend/.output/
+
+/backend/.phpunit.cache/
+
+# ============================================================
+# Docker
+# ============================================================
+
+# Keep Docker configuration tracked.
+# Ignore local Docker overrides if you use them.
+
+/docker-compose.override.yml
+```

@@ -1,0 +1,377 @@
+@import "tailwindcss";
+
+/* Class-based dark mode (toggled on <html> by ThemeProvider). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------
+   Raw palette — the only place literal colours are written.
+   Semantic tokens below are what components actually consume.
+----------------------------------------------------------------*/
+:root {
+  /* Light — soft mint-white paper, brighter and greener than plain gray */
+  --canvas: #f0f7f2;
+  --surface: #e1eee4;
+  --card: #ffffff;
+  --fg: #10130f;
+  --fg-soft: #383e37;
+  --muted: #647065;
+  --line: #d2e2d6;
+  --line-strong: #aecab3;
+
+  --accent: #1e6f5c;
+  --accent-soft: #3e8f78;
+  --accent-contrast: #f0f7f2;
+
+  /* Always-contrasting band (dark section on a light page) */
+  --invert: #0e1210;
+  --invert-soft: #1c211d;
+  --on-invert: #f0f7f2;
+  --on-invert-muted: #96a89c;
+
+  --shadow-color: 10 30 20;
+  --grain-opacity: 0.035;
+}
+
+.dark {
+  /* Dark — deep spruce, never pure black */
+  --canvas: #0a0f0e;
+  --surface: #111614;
+  --card: #151b18;
+  --fg: #eaf0eb;
+  --fg-soft: #ccd5cc;
+  --muted: #859087;
+  --line: #212a25;
+  --line-strong: #303c34;
+
+  --accent: #45c4a4;
+  --accent-soft: #7edcc2;
+  --accent-contrast: #0a0f0e;
+
+  /* In dark mode the "inverted" band becomes an elevated surface,
+     so the page keeps its rhythm without flashing white. */
+  --invert: #151b18;
+  --invert-soft: #1d2521;
+  --on-invert: #eaf0eb;
+  --on-invert-muted: #859087;
+
+  --shadow-color: 0 0 0;
+  --grain-opacity: 0.05;
+}
+
+/* ---------------------------------------------------------------
+   Tailwind theme — `inline` keeps the var() reference in the
+   generated utilities so colours follow the active theme.
+----------------------------------------------------------------*/
+@theme inline {
+  --font-display: var(--font-display-raw), system-ui, sans-serif;
+  --font-body: var(--font-body-raw), system-ui, sans-serif;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-fg: var(--fg);
+  --color-fg-soft: var(--fg-soft);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-contrast: var(--accent-contrast);
+
+  --color-invert: var(--invert);
+  --color-invert-soft: var(--invert-soft);
+  --color-on-invert: var(--on-invert);
+  --color-on-invert-muted: var(--on-invert-muted);
+
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-drape: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Native form controls, scrollbars follow the theme */
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Theme cross-fade. Kept off transform/layout props so it stays cheap. */
+  transition: background-color 0.45s var(--ease-cinematic),
+    color 0.45s var(--ease-cinematic);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* Themed scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--canvas);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border: 3px solid var(--canvas);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------
+   Layout helpers
+----------------------------------------------------------------*/
+.container-x {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-x {
+    padding-inline: 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-x {
+    padding-inline: 5rem;
+  }
+}
+
+.hairline {
+  border-color: var(--line);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* Small rule that precedes an eyebrow label */
+.eyebrow::before {
+  content: "";
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+/* ---------------------------------------------------------------
+   Surface treatments
+----------------------------------------------------------------*/
+
+/* Subtle film grain — one repeating SVG, no network request. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Card with a hairline that warms to the accent on hover */
+.card-surface {
+  background: var(--card);
+  border: 1px solid var(--line);
+  transform: translateY(0);
+  transition: border-color 0.45s var(--ease-cinematic),
+    box-shadow 0.45s var(--ease-cinematic), transform 0.45s var(--ease-cinematic);
+}
+
+.group:hover .card-surface,
+.card-surface:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: 0 18px 40px -24px rgb(var(--shadow-color) / 0.45);
+  transform: translateY(-6px);
+}
+
+/* Thin sheen that sweeps across an element on hover */
+.sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    color-mix(in srgb, var(--on-invert) 22%, transparent) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.9s var(--ease-cinematic);
+}
+
+.group:hover .sheen::before,
+.sheen:hover::before {
+  transform: translateX(120%);
+}
+
+/* Animated underline for inline links */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s var(--ease-cinematic);
+}
+
+.link-underline:hover::after,
+.link-underline[data-active="true"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ---------------------------------------------------------------
+   Keyframe animations
+----------------------------------------------------------------*/
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+}
+
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+@keyframes glow-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -6%, 0) scale(1.12);
+  }
+}
+
+.animate-glow-drift {
+  animation: glow-drift 18s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------
+   Custom cursor (desktop pointers only)
+----------------------------------------------------------------*/
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 200;
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+}
+
+.cursor-ring {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--fg);
+  transition: width 0.3s var(--ease-cinematic), height 0.3s var(--ease-cinematic),
+    background-color 0.3s ease, border-color 0.3s ease;
+}
+
+@media (max-width: 1024px), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Reduced motion
+----------------------------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
