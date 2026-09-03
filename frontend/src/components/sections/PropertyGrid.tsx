@@ -2,11 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { properties } from "@/data/properties";
 import PropertyCard from "@/components/ui/PropertyCard";
 import { Search, SearchX, X } from "lucide-react";
 import clsx from "clsx";
-import { PropertyStatus } from "@/types";
+import { Property, PropertyStatus } from "@/types";
 
 const statusFilters: { label: string; value: PropertyStatus | "all" }[] = [
   { label: "All", value: "all" },
@@ -15,7 +14,7 @@ const statusFilters: { label: string; value: PropertyStatus | "all" }[] = [
   { label: "Sold", value: "sold" },
 ];
 
-export default function PropertyGrid() {
+export default function PropertyGrid({ properties }: { properties: Property[] }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<PropertyStatus | "all">("all");
 
@@ -29,7 +28,7 @@ export default function PropertyGrid() {
         p.location.toLowerCase().includes(q);
       return matchesStatus && matchesQuery;
     });
-  }, [query, status]);
+  }, [query, status, properties]);
 
   return (
     <div className="container-x pb-28">

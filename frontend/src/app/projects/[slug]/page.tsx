@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { projects } from "@/data/projects";
+import { getProject, getProjects } from "@/lib/api";
 import FadeUp from "@/components/animations/FadeUp";
 import RevealText from "@/components/animations/RevealText";
 import SmartImage from "@/components/ui/SmartImage";
@@ -10,17 +10,13 @@ import ProjectCard from "@/components/ui/ProjectCard";
 import Button from "@/components/ui/Button";
 import { ArrowLeft } from "lucide-react";
 
-export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = await getProject(slug);
   if (!project) return {};
   return {
     title: project.name,
@@ -34,10 +30,11 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
+  const project = await getProject(slug);
   if (!project) notFound();
 
-  const related = projects.filter((p) => p.slug !== slug).slice(0, 2);
+  const allProjects = await getProjects();
+  const related = allProjects.filter((p) => p.slug !== slug).slice(0, 2);
 
   return (
     <>

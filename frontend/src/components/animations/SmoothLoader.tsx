@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
  * than a moment to the perceived load. Skipped entirely on repeat views
  * within the session and under prefers-reduced-motion.
  */
-export default function SmoothLoader() {
+export default function SmoothLoader({ siteName = "Meridian" }: { siteName?: string }) {
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -88,7 +88,7 @@ export default function SmoothLoader() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="relative overflow-hidden"
           >
-            <p className="font-display text-4xl tracking-tight md:text-5xl">Meridian</p>
+            <p className="font-display text-4xl tracking-tight md:text-5xl">{siteName}</p>
           </motion.div>
 
           <div className="relative mt-8 h-px w-40 bg-on-invert/20">

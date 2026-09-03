@@ -2,12 +2,12 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { processSteps } from "@/data/content";
+import { ProcessStep } from "@/types";
 import { processIcons, fallbackIcon } from "@/data/icons";
 import RevealText from "@/components/animations/RevealText";
 import useInViewOnce from "@/hooks/useInViewOnce";
 
-export default function Process() {
+export default function Process({ steps }: { steps: ProcessStep[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const { ref: listRef, inView } = useInViewOnce<HTMLDivElement>();
   const { scrollYProgress } = useScroll({
@@ -32,7 +32,7 @@ export default function Process() {
         </div>
 
         <div ref={listRef} className="divide-y hairline">
-          {processSteps.map((step, i) => {
+          {steps.map((step, i) => {
             const Icon = processIcons[step.id] ?? fallbackIcon;
             return (
               <motion.div

@@ -7,10 +7,22 @@ const nextConfig: NextConfig = {
     // Next 16 requires an explicit allowlist; 75 is the default quality.
     qualities: [60, 75, 90],
     minimumCacheTTL: 60 * 60 * 24 * 30,
+    // Local dev only: the Laravel API is on 127.0.0.1, which Next 16 blocks
+    // by default as an SSRF guard against optimizing attacker-supplied URLs.
+    // Safe here since the image source is our own backend, not user input.
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "images.unsplash.com",
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "8000",
+        pathname: "/storage/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/storage/**",
       },
     ],
   },

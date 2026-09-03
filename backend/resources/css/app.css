@@ -1,0 +1,212 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../app/**/*.php';
+
+/*
+ * The Laravel default also scans storage/framework/views (the compiled Blade
+ * cache). That is deliberately left out: whether those files exist depends on
+ * when `view:clear` last ran, which makes the built CSS differ between an
+ * otherwise identical build. Every class comes from the Blade sources above,
+ * plus the class strings that live in PHP (component maps, status badges).
+ */
+
+/* Dark mode is driven by a `dark` class on <html>, toggled by the topbar switch. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+
+    /* Horizon UI brand ramp */
+    --color-brand-50: #f4f0ff;
+    --color-brand-100: #e9e3ff;
+    --color-brand-200: #d6ccff;
+    --color-brand-300: #b8a6ff;
+    --color-brand-400: #8f6bff;
+    --color-brand-500: #7551ff;
+    --color-brand-600: #4318ff;
+    --color-brand-700: #3311db;
+    --color-brand-800: #2b0ea6;
+    --color-brand-900: #190793;
+
+    /* Horizon UI navy (dark surface ramp) */
+    --color-navy-50: #d0dcfb;
+    --color-navy-100: #aac0fe;
+    --color-navy-200: #a3b9f8;
+    --color-navy-300: #728fea;
+    --color-navy-400: #3652ba;
+    --color-navy-500: #1b3bbb;
+    --color-navy-600: #24388a;
+    --color-navy-700: #1b254b;
+    --color-navy-800: #111c44;
+    --color-navy-900: #0b1437;
+
+    --color-success: #05cd99;
+    --color-warning: #ffb547;
+    --color-danger: #ee5d50;
+    --color-info: #01b574;
+
+    --shadow-card: 14px 17px 40px 4px rgba(112, 144, 176, 0.18);
+    --shadow-card-dark: 14px 17px 40px 4px rgba(12, 20, 55, 0.5);
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+
+        /* Single source of truth for the sidebar width. The collapse toggle
+           swaps it on <html> so the width is correct on the very first paint,
+           before Alpine has loaded. */
+        --hz-sidebar: 290px;
+    }
+
+    html.sidebar-collapsed {
+        --hz-sidebar: 92px;
+    }
+
+    body {
+        @apply bg-[#f4f7fe] text-navy-700 antialiased dark:bg-navy-900 dark:text-white;
+    }
+
+    /* Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(112, 144, 176, 0.4) transparent;
+    }
+
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        @apply rounded-full bg-slate-300 dark:bg-navy-600;
+    }
+}
+
+@layer components {
+    /* The rounded, soft-shadow surface every Horizon panel is built from. */
+    .hz-card {
+        @apply rounded-[20px] bg-white p-6 shadow-card dark:bg-navy-800 dark:shadow-card-dark;
+    }
+
+    .hz-label {
+        @apply mb-2 block text-sm font-bold text-navy-700 dark:text-white;
+    }
+
+    .hz-input {
+        @apply w-full rounded-xl border border-slate-200 bg-white/0 px-4 py-3 text-sm font-medium text-navy-700
+               outline-none transition placeholder:text-slate-400
+               focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20
+               disabled:cursor-not-allowed disabled:opacity-60
+               dark:border-white/10 dark:text-white dark:placeholder:text-navy-300;
+    }
+
+    .hz-input-error {
+        @apply border-danger focus:border-danger focus:ring-danger/20;
+    }
+
+    .hz-error {
+        @apply mt-1.5 block text-xs font-medium text-danger;
+    }
+
+    .hz-hint {
+        @apply mt-1.5 block text-xs font-medium text-slate-400 dark:text-navy-300;
+    }
+
+    /* Tailwind v4 cannot @apply one custom class inside another, so the shared
+       button base is repeated through this selector list rather than composed. */
+    .hz-btn,
+    .hz-btn-primary,
+    .hz-btn-ghost,
+    .hz-btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold
+               transition-all duration-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60;
+    }
+
+    .hz-btn-primary {
+        @apply bg-brand-600 text-white hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/30;
+    }
+
+    .hz-btn-ghost {
+        @apply bg-slate-100 text-navy-700 hover:bg-slate-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20;
+    }
+
+    .hz-btn-danger {
+        @apply bg-danger/10 text-danger hover:bg-danger hover:text-white;
+    }
+
+    .hz-badge {
+        @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold;
+    }
+
+    /* Table shell shared by every index screen. */
+    .hz-th {
+        @apply border-b border-slate-200 px-4 py-3 text-left text-xs font-bold tracking-wide text-slate-400
+               uppercase dark:border-white/10 dark:text-navy-300;
+    }
+
+    .hz-td {
+        @apply border-b border-slate-100 px-4 py-4 text-sm font-medium text-navy-700 dark:border-white/5 dark:text-white;
+    }
+
+    /*
+     * Sidebar geometry. Below the xl breakpoint the sidebar is a full-width
+     * drawer and the collapse state is ignored entirely — a rail would be
+     * useless on a phone, where the sidebar is hidden by default anyway.
+     */
+    .hz-sidebar {
+        width: 290px;
+    }
+
+    @media (min-width: 80rem) {
+        .hz-sidebar {
+            width: var(--hz-sidebar);
+            transition: width 300ms ease;
+        }
+
+        .hz-shell {
+            padding-left: var(--hz-sidebar);
+            transition: padding-left 300ms ease;
+        }
+
+        /* Labels, badges and the promo card fold away in the rail. */
+        html.sidebar-collapsed .hz-rail-hide {
+            display: none;
+        }
+
+        /* …and the rail-only stand-ins take their place. */
+        html.sidebar-collapsed .hz-rail-only {
+            display: flex;
+        }
+
+        html.sidebar-collapsed .hz-rail-center {
+            justify-content: center;
+            padding-inline: 0;
+        }
+    }
+
+    /* Rail stand-ins are hidden everywhere except an xl-and-up collapsed
+       sidebar, which the rule above turns back on. */
+    .hz-rail-only {
+        display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .hz-sidebar,
+        .hz-shell {
+            transition: none;
+        }
+    }
+
+    .hz-nav-link {
+        @apply relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-500
+               transition hover:text-navy-700 dark:text-navy-100 dark:hover:text-white;
+    }
+
+    .hz-nav-link-active {
+        @apply font-bold text-navy-700 dark:text-white;
+    }
+}

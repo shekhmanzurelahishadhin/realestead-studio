@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { SiteSettings } from "@/types";
 
 /**
  * Brand marks are drawn inline — lucide dropped its brand icon set, and these
@@ -51,46 +53,60 @@ const columns = [
   },
 ];
 
-const contact = [
-  { href: "tel:+8801711000000", label: "+880 1711 000 000", icon: Phone },
-  { href: "mailto:hello@meridian.studio", label: "hello@meridian.studio", icon: Mail },
-  { href: "/contact", label: "House 14, Road 7, Gulshan 1, Dhaka", icon: MapPin },
-];
+export default function Footer({ settings }: { settings: SiteSettings }) {
+  const contact = [
+    settings.phone && { href: `tel:${settings.phone.replace(/\s+/g, "")}`, label: settings.phone, icon: Phone },
+    settings.email && { href: `mailto:${settings.email}`, label: settings.email, icon: Mail },
+    settings.address && { href: "/contact", label: settings.address, icon: MapPin },
+  ].filter((x): x is { href: string; label: string; icon: typeof Phone } => Boolean(x));
 
-const socials = [
-  { href: "#", label: "Instagram", icon: InstagramMark },
-  { href: "#", label: "LinkedIn", icon: LinkedinMark },
-  { href: "#", label: "Facebook", icon: FacebookMark },
-];
+  const socials = [
+    settings.socials.instagram && { href: settings.socials.instagram, label: "Instagram", icon: InstagramMark },
+    settings.socials.linkedin && { href: settings.socials.linkedin, label: "LinkedIn", icon: LinkedinMark },
+    settings.socials.facebook && { href: settings.socials.facebook, label: "Facebook", icon: FacebookMark },
+  ].filter((x): x is { href: string; label: string; icon: typeof InstagramMark } => Boolean(x));
 
-export default function Footer() {
   return (
     <footer className="border-t hairline bg-surface pt-20">
       <div className="container-x">
         <div className="grid grid-cols-1 gap-14 pb-16 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full border hairline">
-                <span className="h-2 w-2 rounded-full bg-accent" />
-              </span>
-              <p className="font-display text-3xl tracking-tight text-fg">Meridian</p>
+              {settings.logoImage ? (
+                <Image
+                  src={settings.logoImage}
+                  alt={settings.siteName}
+                  width={28}
+                  height={28}
+                  className="h-7 w-7 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <span className="flex h-7 w-7 items-center justify-center rounded-full border hairline">
+                  <span className="h-2 w-2 rounded-full bg-accent" />
+                </span>
+              )}
+              <p className="font-display text-3xl tracking-tight text-fg">{settings.siteName}</p>
             </div>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted">
-              A real estate development and construction studio designing and
-              building considered spaces across Bangladesh since 2000.
+              {settings.tagline ??
+                "A real estate development and construction studio designing and building considered spaces."}
             </p>
-            <div className="mt-7 flex gap-3">
-              {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  aria-label={s.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border hairline text-fg-soft transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-accent-contrast"
-                >
-                  <s.icon className="h-4 w-4" aria-hidden />
-                </a>
-              ))}
-            </div>
+            {socials.length > 0 && (
+              <div className="mt-7 flex gap-3">
+                {socials.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border hairline text-fg-soft transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-accent-contrast"
+                  >
+                    <s.icon className="h-4 w-4" aria-hidden />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {columns.map((col) => (
@@ -111,26 +127,28 @@ export default function Footer() {
             </div>
           ))}
 
-          <div>
-            <p className="eyebrow">Contact</p>
-            <ul className="mt-5 space-y-3">
-              {contact.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="group flex items-start gap-2.5 text-sm text-fg-soft transition-colors hover:text-accent"
-                  >
-                    <item.icon size={15} className="mt-0.5 shrink-0 text-accent" />
-                    <span>{item.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {contact.length > 0 && (
+            <div>
+              <p className="eyebrow">Contact</p>
+              <ul className="mt-5 space-y-3">
+                {contact.map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="group flex items-start gap-2.5 text-sm text-fg-soft transition-colors hover:text-accent"
+                    >
+                      <item.icon size={15} className="mt-0.5 shrink-0 text-accent" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col items-start justify-between gap-4 border-t hairline py-8 text-xs text-muted md:flex-row md:items-center">
-          <p>© {new Date().getFullYear()} Meridian Development Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {settings.siteName} Development Ltd. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="/privacy" className="transition-colors hover:text-accent">
               Privacy

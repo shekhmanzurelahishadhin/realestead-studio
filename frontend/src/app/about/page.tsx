@@ -6,6 +6,7 @@ import ImageReveal from "@/components/animations/ImageReveal";
 import SmartImage from "@/components/ui/SmartImage";
 import Stats from "@/components/sections/Stats";
 import CTA from "@/components/sections/CTA";
+import { getStats } from "@/lib/api";
 import { Flag } from "lucide-react";
 
 const milestones = [
@@ -20,17 +21,17 @@ const leadership = [
   {
     name: "Rafiqul Islam",
     role: "Founder & Managing Director",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop",
+    image: "http://127.0.0.1:8000/storage/images/leader-rafiqul.jpg",
   },
   {
     name: "Shirin Akhter",
     role: "Head of Architecture",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&auto=format&fit=crop",
+    image: "http://127.0.0.1:8000/storage/images/leader-shirin.jpg",
   },
   {
     name: "Tanvir Ahmed",
     role: "Head of Construction",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop",
+    image: "http://127.0.0.1:8000/storage/images/leader-tanvir.jpg",
   },
 ];
 
@@ -39,7 +40,9 @@ export const metadata: Metadata = {
   description: "Meridian's story, mission and leadership team.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const stats = await getStats();
+
   return (
     <>
       <PageHero
@@ -52,7 +55,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
           <div className="lg:col-span-6">
             <ImageReveal
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1800&auto=format&fit=crop"
+              src="http://127.0.0.1:8000/storage/images/meridian-quarter.jpg"
               alt="Meridian architectural project exterior"
               className="aspect-[4/5]"
             />
@@ -80,7 +83,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Stats />
+      <Stats stats={stats} />
 
       <section className="container-x py-28">
         <p className="eyebrow mb-6 uppercase">Timeline</p>

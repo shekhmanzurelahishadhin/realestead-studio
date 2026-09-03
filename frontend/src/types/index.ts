@@ -57,3 +57,20 @@ export type Stat = {
   suffix: string;
   label: string;
 };
+
+export type SiteSettings = {
+  siteName: string;
+  tagline: string | null;
+  logoImage: string | null;
+  favicon: string | null;
+  heroImage: string;
+  heroVideo: string | null;
+  phone: string | null;
+  email: string | null;
+  address: string | null;
+  socials: {
+    instagram: string | null;
+    linkedin: string | null;
+    facebook: string | null;
+  };
+};

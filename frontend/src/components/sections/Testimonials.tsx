@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { testimonials } from "@/data/content";
+import { Testimonial } from "@/types";
 import { ArrowLeft, ArrowRight, Quote, Star } from "lucide-react";
 
-export default function Testimonials() {
+export default function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
   const [[index, direction], setState] = useState<[number, number]>([0, 1]);
   const active = testimonials[index];
 

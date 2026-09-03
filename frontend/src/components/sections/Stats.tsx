@@ -1,8 +1,8 @@
-import { stats } from "@/data/content";
+import { Stat } from "@/types";
 import Counter from "@/components/animations/Counter";
 import FadeUp from "@/components/animations/FadeUp";
 
-export default function Stats() {
+export default function Stats({ stats }: { stats: Stat[] }) {
   return (
     <section className="grain relative overflow-hidden border-y hairline bg-invert text-on-invert">
       <div

@@ -7,7 +7,7 @@ export default function CTA() {
   return (
     <section className="grain relative overflow-hidden bg-invert py-32 text-on-invert md:py-44">
       <ParallaxImage
-        src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=2400&auto=format&fit=crop"
+        src="http://127.0.0.1:8000/storage/images/cta-facade-dusk.jpg"
         alt="Contemporary building facade at dusk"
         className="absolute inset-0 opacity-30 dark:opacity-20"
         sizes="100vw"

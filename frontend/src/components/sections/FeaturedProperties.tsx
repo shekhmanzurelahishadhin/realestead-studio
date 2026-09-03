@@ -1,10 +1,10 @@
-import { properties } from "@/data/properties";
+import { Property } from "@/types";
 import RevealText from "@/components/animations/RevealText";
 import FadeUp from "@/components/animations/FadeUp";
 import PropertyCard from "@/components/ui/PropertyCard";
 import Button from "@/components/ui/Button";
 
-export default function FeaturedProperties() {
+export default function FeaturedProperties({ properties }: { properties: Property[] }) {
   return (
     <section className="container-x py-28 md:py-36">
       <div className="mb-14 flex items-end justify-between gap-6">

@@ -8,26 +8,28 @@ import RevealText from "@/components/animations/RevealText";
 import MagneticButton from "@/components/animations/MagneticButton";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 
-const POSTER =
-  "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=2400&auto=format&fit=crop";
-
-/**
- * Ambient background clip, layered over the poster once the page is idle.
- * Served from /public (local, no hotlink protection to break) rather than a
- * third-party CDN. The poster image is what actually renders first and
- * counts as the LCP — this loads only after idle, on desktop, on a fast
- * connection, and never under prefers-reduced-motion, so it can never slow
- * down first paint. If it fails to load for any reason the poster stays put.
- */
-const HERO_VIDEO = "/hero.mp4";
-
 const marks = [
   { value: "25+", label: "Years" },
   { value: "120+", label: "Projects" },
   { value: "18", label: "Cities" },
 ];
 
-export default function Hero() {
+export default function Hero({
+  posterUrl,
+  videoUrl,
+  tagline,
+}: {
+  posterUrl: string;
+  /**
+   * Ambient background clip, layered over the poster once the page is idle.
+   * The poster image is what actually renders first and counts as the LCP —
+   * the video loads only after idle, on desktop, on a fast connection, and
+   * never under prefers-reduced-motion, so it can never slow down first
+   * paint. If it fails to load for any reason the poster simply stays put.
+   */
+  videoUrl: string | null;
+  tagline?: string | null;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -46,7 +48,7 @@ export default function Hero() {
 
   useEffect(() => {
     // Skip the clip on small screens, slow links, and reduced-motion setups.
-    if (!HERO_VIDEO) return;
+    if (!videoUrl) return;
     if (window.matchMedia("(max-width: 767px)").matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -61,7 +63,7 @@ export default function Hero() {
     // actually going idle (which a busy page may never report).
     const id = window.setTimeout(() => setShowVideo(true), 800);
     return () => window.clearTimeout(id);
-  }, []);
+  }, [videoUrl]);
 
   return (
     <section
@@ -71,7 +73,7 @@ export default function Hero() {
       {/* Poster image — the LCP element, preloaded */}
       <motion.div style={{ scale: imageScale, y: imageY }} className="absolute inset-0">
         <Image
-          src={POSTER}
+          src={posterUrl}
           alt="Modern architectural building against the sky"
           fill
           preload
@@ -80,10 +82,10 @@ export default function Hero() {
           className="object-cover"
         />
 
-        {showVideo && !videoFailed && (
+        {showVideo && videoUrl && !videoFailed && (
           <video
-            src={HERO_VIDEO}
-            poster={POSTER}
+            src={videoUrl}
+            poster={posterUrl}
             autoPlay
             muted
             loop
@@ -125,7 +127,7 @@ export default function Hero() {
               className="h-px w-10 origin-left bg-accent-soft"
             />
             <p className="text-xs font-medium tracking-[0.18em] text-on-invert/70">
-              Real Estate &amp; Construction Studio &middot; Est. 2000
+              {tagline ?? "Real Estate & Construction Studio · Est. 2000"}
             </p>
           </motion.div>
 

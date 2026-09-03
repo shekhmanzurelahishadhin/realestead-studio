@@ -7,6 +7,7 @@ import CustomCursor from "@/components/animations/CustomCursor";
 import SmoothLoader from "@/components/animations/SmoothLoader";
 import ThemeProvider, { themeInitScript } from "@/components/theme/ThemeProvider";
 import BackToTop from "@/components/ui/BackToTop";
+import { getSettings } from "@/lib/api";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -23,27 +24,32 @@ const inter = Inter({
   preload: true,
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://meridian-studio.example.com"),
-  title: {
-    default: "Meridian — Real Estate & Construction",
-    template: "%s — Meridian",
-  },
-  description:
-    "Meridian is a real estate development and construction studio designing and building residential, commercial and mixed-use projects across Bangladesh.",
-  openGraph: {
-    title: "Meridian — Real Estate & Construction",
-    description:
-      "We build spaces that define the future. A real estate development and construction studio.",
-    type: "website",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Meridian — Real Estate & Construction",
-    description: "We build spaces that define the future.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  const description =
+    settings.tagline ??
+    `${settings.siteName} is a real estate development and construction studio.`;
+
+  return {
+    metadataBase: new URL("https://meridian-studio.example.com"),
+    title: {
+      default: `${settings.siteName} — Real Estate & Construction`,
+      template: `%s — ${settings.siteName}`,
+    },
+    description,
+    openGraph: {
+      title: `${settings.siteName} — Real Estate & Construction`,
+      description,
+      type: "website",
+      locale: "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${settings.siteName} — Real Estate & Construction`,
+      description,
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: [
@@ -52,27 +58,29 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSettings();
+
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         {/* Runs before first paint so the stored theme is applied with no flash. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         {/* Warm up the image CDN while the document is still parsing. */}
-        <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="http://127.0.0.1:8000" />
+        <link rel="dns-prefetch" href="http://127.0.0.1:8000" />
       </head>
       <body className={`${spaceGrotesk.variable} ${inter.variable} antialiased`}>
         <ThemeProvider>
-          <SmoothLoader />
+          <SmoothLoader siteName={settings.siteName} />
           <CustomCursor />
-          <Navbar />
+          <Navbar settings={settings} />
           <main id="main">{children}</main>
-          <Footer />
+          <Footer settings={settings} />
           <BackToTop />
         </ThemeProvider>
       </body>

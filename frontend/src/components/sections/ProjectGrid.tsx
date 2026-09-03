@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { projects } from "@/data/projects";
+import { Project } from "@/types";
 import ProjectCard from "@/components/ui/ProjectCard";
 import clsx from "clsx";
 
-export default function ProjectGrid() {
+export default function ProjectGrid({ projects }: { projects: Project[] }) {
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(projects.map((p) => p.category)))],
-    []
+    [projects]
   );
   const [filter, setFilter] = useState("All");
 

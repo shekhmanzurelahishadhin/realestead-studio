@@ -3,15 +3,40 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import MagneticButton from "@/components/animations/MagneticButton";
-import { ArrowUpRight, Check } from "lucide-react";
+import { submitContact } from "@/lib/api";
+import { ArrowUpRight, Check, LoaderCircle, TriangleAlert } from "lucide-react";
+import clsx from "clsx";
 
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Wire this to your API route / Laravel endpoint when the backend exists.
-    setSubmitted(true);
+    setSending(true);
+    setError(null);
+    setFieldErrors({});
+
+    const form = new FormData(e.currentTarget);
+    const result = await submitContact({
+      name: String(form.get("name") ?? ""),
+      email: String(form.get("email") ?? ""),
+      phone: String(form.get("phone") ?? "") || undefined,
+      subject: String(form.get("subject") ?? "") || undefined,
+      message: String(form.get("message") ?? ""),
+    });
+
+    setSending(false);
+
+    if (result.ok) {
+      setSubmitted(true);
+      return;
+    }
+
+    setError(result.message);
+    setFieldErrors(result.errors ?? {});
   };
 
   if (submitted) {
@@ -41,13 +66,20 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      {error && (
+        <div className="flex items-start gap-2.5 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-600 dark:text-red-400">
+          <TriangleAlert size={16} className="mt-0.5 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-        <Field label="Full name" name="name" type="text" required />
-        <Field label="Email address" name="email" type="email" required />
+        <Field label="Full name" name="name" type="text" required errors={fieldErrors.name} />
+        <Field label="Email address" name="email" type="email" required errors={fieldErrors.email} />
       </div>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-        <Field label="Phone" name="phone" type="tel" />
-        <Field label="Subject" name="subject" type="text" />
+        <Field label="Phone" name="phone" type="tel" errors={fieldErrors.phone} />
+        <Field label="Subject" name="subject" type="text" errors={fieldErrors.subject} />
       </div>
       <div className="group">
         <label htmlFor="message" className="text-xs tracking-[0.1em] text-muted">
@@ -60,19 +92,35 @@ export default function ContactForm() {
           rows={5}
           className="mt-2 w-full resize-none border-b hairline bg-transparent py-2 text-fg outline-none transition-colors focus:border-accent"
         />
+        {fieldErrors.message && (
+          <p className="mt-1.5 text-xs text-red-500">{fieldErrors.message[0]}</p>
+        )}
       </div>
 
       <MagneticButton>
         <button
           type="submit"
+          disabled={sending}
           data-cursor="SEND"
-          className="group inline-flex items-center gap-2.5 rounded-full bg-fg px-7 py-4 text-sm font-medium text-canvas transition-colors duration-300 hover:bg-accent hover:text-accent-contrast"
+          className={clsx(
+            "group inline-flex items-center gap-2.5 rounded-full bg-fg px-7 py-4 text-sm font-medium text-canvas transition-colors duration-300",
+            sending ? "cursor-not-allowed opacity-70" : "hover:bg-accent hover:text-accent-contrast"
+          )}
         >
-          Send Message
-          <ArrowUpRight
-            size={16}
-            className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          />
+          {sending ? (
+            <>
+              Sending
+              <LoaderCircle size={16} className="animate-spin" />
+            </>
+          ) : (
+            <>
+              Send Message
+              <ArrowUpRight
+                size={16}
+                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </>
+          )}
         </button>
       </MagneticButton>
     </form>
@@ -84,11 +132,13 @@ function Field({
   name,
   type,
   required,
+  errors,
 }: {
   label: string;
   name: string;
   type: string;
   required?: boolean;
+  errors?: string[];
 }) {
   return (
     <div>
@@ -102,6 +152,7 @@ function Field({
         required={required}
         className="mt-2 w-full border-b hairline bg-transparent py-2 text-fg outline-none transition-colors focus:border-accent"
       />
+      {errors && <p className="mt-1.5 text-xs text-red-500">{errors[0]}</p>}
     </div>
   );
 }

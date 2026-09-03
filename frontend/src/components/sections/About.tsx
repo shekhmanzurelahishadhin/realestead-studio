@@ -72,7 +72,7 @@ export default function About() {
 
         <div className="lg:col-span-5 lg:pt-16">
           <ImageReveal
-            src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1400&auto=format&fit=crop"
+            src="http://127.0.0.1:8000/storage/images/architectural-detail.jpg"
             alt="Interior architectural detail with warm natural light"
             className="aspect-[4/5] w-full rounded-xl"
             sizes="(min-width: 1024px) 40vw, 90vw"

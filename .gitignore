@@ -87,6 +87,10 @@ pnpm-debug.log*
 /backend/storage/*.key
 /backend/storage/app/*
 !/backend/storage/app/.gitignore
+# Seed photos ship with the repo (see backend/storage/app/public/.gitignore
+# for the matching un-ignore) so a fresh clone has working images without
+# redownloading them.
+!/backend/storage/app/public/
 
 /backend/storage/framework/cache/*
 !/backend/storage/framework/cache/.gitignore

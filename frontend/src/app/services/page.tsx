@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import PageHero from "@/components/sections/PageHero";
-import { services } from "@/data/content";
+import { getServices } from "@/lib/api";
 import FadeUp from "@/components/animations/FadeUp";
 import Button from "@/components/ui/Button";
 import CTA from "@/components/sections/CTA";
@@ -11,7 +11,9 @@ export const metadata: Metadata = {
   description: "Development, construction, architecture, interiors, property management and commercial delivery.",
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const services = await getServices();
+
   return (
     <>
       <PageHero

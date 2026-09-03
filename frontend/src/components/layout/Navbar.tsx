@@ -6,7 +6,9 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import clsx from "clsx";
+import Image from "next/image";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import { SiteSettings } from "@/types";
 
 const links = [
   { href: "/projects", label: "Projects" },
@@ -16,7 +18,7 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ settings }: { settings: SiteSettings }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -84,19 +86,29 @@ export default function Navbar() {
 
           <Link
             href="/"
-            aria-label="Meridian — home"
+            aria-label={`${settings.siteName} — home`}
             className={clsx(
               "group relative z-[1] flex items-center gap-2.5 transition-colors duration-500",
               onDark ? "text-on-invert" : "text-fg"
             )}
           >
-            <span
-              aria-hidden
-              className="relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border border-current/40"
-            >
-              <span className="h-2 w-2 rounded-full bg-accent transition-transform duration-500 group-hover:scale-[2.6]" />
-            </span>
-            <span className="font-display text-xl tracking-tight">Meridian</span>
+            {settings.logoImage ? (
+              <Image
+                src={settings.logoImage}
+                alt={settings.siteName}
+                width={28}
+                height={28}
+                className="h-7 w-7 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span
+                aria-hidden
+                className="relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border border-current/40"
+              >
+                <span className="h-2 w-2 rounded-full bg-accent transition-transform duration-500 group-hover:scale-[2.6]" />
+              </span>
+            )}
+            <span className="font-display text-xl tracking-tight">{settings.siteName}</span>
           </Link>
 
           <nav className="hidden items-center gap-9 lg:flex">
@@ -209,8 +221,8 @@ export default function Navbar() {
               transition={{ delay: 0.5, duration: 0.6 }}
               className="relative mt-12 space-y-2 text-sm tracking-wide text-on-invert-muted"
             >
-              <p>House 14, Road 7, Gulshan 1, Dhaka</p>
-              <p>+880 1711 000 000</p>
+              {settings.address && <p>{settings.address}</p>}
+              {settings.phone && <p>{settings.phone}</p>}
             </motion.div>
           </motion.div>
         )}

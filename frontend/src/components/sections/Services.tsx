@@ -3,12 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { services } from "@/data/content";
+import { Service } from "@/types";
 import RevealText from "@/components/animations/RevealText";
-import { serviceIcons } from "@/data/icons";
+import { serviceIcons, fallbackIcon } from "@/data/icons";
 import { ArrowUpRight, Plus } from "lucide-react";
 
-export default function Services() {
+export default function Services({ services }: { services: Service[] }) {
   const [active, setActive] = useState(0);
   const current = services[Math.max(0, active)];
 
@@ -31,7 +31,7 @@ export default function Services() {
           {/* Desktop: hover list */}
           <div className="hidden lg:block">
             {services.map((service, i) => {
-              const Icon = serviceIcons[service.id];
+              const Icon = serviceIcons[service.id] ?? fallbackIcon;
               return (
                 <button
                   key={service.id}
@@ -69,7 +69,7 @@ export default function Services() {
           {/* Mobile: accordion */}
           <div className="lg:hidden">
             {services.map((service, i) => {
-              const Icon = serviceIcons[service.id];
+              const Icon = serviceIcons[service.id] ?? fallbackIcon;
               return (
                 <div
                   key={service.id}

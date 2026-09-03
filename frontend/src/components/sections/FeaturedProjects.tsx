@@ -1,11 +1,11 @@
-import { projects } from "@/data/projects";
+import { Project } from "@/types";
 import HorizontalScroll from "@/components/animations/HorizontalScroll";
 import RevealText from "@/components/animations/RevealText";
 import SmartImage from "@/components/ui/SmartImage";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, MapPin } from "lucide-react";
 
-export default function FeaturedProjects() {
+export default function FeaturedProjects({ projects }: { projects: Project[] }) {
   return (
     <section className="bg-surface py-28 md:py-36">
       <div className="container-x mb-14 flex items-end justify-between gap-6">

@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { properties } from "@/data/properties";
+import { getProperty } from "@/lib/api";
 import FadeUp from "@/components/animations/FadeUp";
 import RevealText from "@/components/animations/RevealText";
 import PropertyGallery from "@/components/sections/PropertyGallery";
 import Button from "@/components/ui/Button";
 import { ArrowLeft, BedDouble, Bath, Ruler, Check, MapPin, Navigation } from "lucide-react";
-
-export function generateStaticParams() {
-  return properties.map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({
   params,
@@ -18,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const property = properties.find((p) => p.slug === slug);
+  const property = await getProperty(slug);
   if (!property) return {};
   return {
     title: property.title,
@@ -32,7 +28,7 @@ export default async function PropertyDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const property = properties.find((p) => p.slug === slug);
+  const property = await getProperty(slug);
   if (!property) notFound();
 
   const directionsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
